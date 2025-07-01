@@ -6,7 +6,7 @@ const regd_users = express.Router();
 let users = [];
 
 const isValid = (username)=>{ //returns boolean
-    filtered_users = users.filter(user => (user.username === username))
+    lefiltered_users = users.filter(user => (user.username === username))
     if (filtered_users.length > 0) {
         return false
     } else {
@@ -15,7 +15,7 @@ const isValid = (username)=>{ //returns boolean
 }
 
 const authenticatedUser = (username,password)=>{ //returns boolean
-    filtered_users = users.filter(user => (user.username === username && user.password === password))
+    let filtered_users = users.filter(user => (user.username === username && user.password === password))
     if (filtered_users.length > 0) {
         return true
     } else {
@@ -48,7 +48,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     const review = req.query.review
     const username = req.session.authorization['username']
     if (books[isbn]) {
-        books.isbn.review.username = review
+        books[isbn].review[username] = review
         return res.status(200).json({message : "Review successfully added"})
     } else {
         return res.status(404).json({message : `Book with ISBN ${isbn} not found`})
@@ -58,8 +58,8 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 regd_users.delete("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn
     const username = req.session.authorization['username']
-    if (books[isbn]) {
-        delete books.isbn.review.username
+    if (books[isbn] && books[isbn].reviews[username]) {
+        delete books[isbn].reviews[username]
     }
     return res.status(200).json({message : "Review successfully deleted."})
 })
